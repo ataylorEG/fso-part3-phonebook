@@ -1,84 +1,116 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
+// Sample data for phonebook entries
 let people = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+  {
+    id: 1,
+    name: 'Arto Hellas',
+    number: '040-123456',
+  },
+  {
+    id: 2,
+    name: 'Ada Lovelace',
+    number: '39-44-5323523',
+  },
+  {
+    id: 3,
+    name: 'Dan Abramov',
+    number: '12-43-234345',
+  },
+  {
+    id: 4,
+    name: 'Mary Poppendieck',
+    number: '39-23-6423122',
+  },
+];
 
+// Home route
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-  })
+  response.send('<h1>Hello World!</h1>');
+});
 
-  app.get('/api/people', (request, response) => {
-    response.json(people)
-  })
-  
-  app.get('/api/people/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = people.find(person => person.id === id)
-    if (person) {
-      response.json(person)
-    } else {
-      response.status(404).end()
-    }
-  })
+// Route to get all people in the phonebook
+app.get('/api/persons', (request, response) => {
+  response.json(people);
+});
 
-  app.delete('/api/people/:id', (request, response) => {
-    const id = Number(request.params.id)
-    people = people.filter(person => person.id !== id)
-  
-    response.status(204).end()
-  })
-
-  const generateId = () => {
-    const maxId = people.length > 0
-      ? Math.max(...people.map(p => p.id))
-      : 0
-    return maxId + 1
+// Route to get a specific person by their ID
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id);
+  const person = people.find((person) => person.id === id);
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
   }
-  
-  app.post('/api/people', (request, response) => {
-    const body = request.body
-  
-    if (!body.content) {
-      return response.status(400).json({ 
-        error: 'content missing' 
-      })
-    }
+});
 
-    const person = { 
-        name: body.name,
-        number: body.number,
-        id: generateId()
-      },
+// Route to delete a person by their ID
+app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id);
+    const initialLength = people.length;
+    people = people.filter((person) => person.id !== id);
   
-    people = people.concat(person)
+    if (initialLength > people.length) {
+      response.status(204).end(); // Person was found and deleted, return 204 No Content
+    } else {
+      response.status(404).json({ error: 'Person not found' }); // Person not found, return 404 Not Found
+    }
+  });
+
+// Function to generate a new ID for a person
+const generateId = () => {
+    const minId = 1;
+    const maxId = 100000;
+    return Math.floor(Math.random() * (maxId - minId + 1)) + minId;
+  };
+
+// Route to create a new person
+app.post('/api/persons', (request, response) => {
+    const body = request.body;
   
-    response.json(person)
-  })
+    // Check if the name or number is missing
+    if (!body.name || !body.number) {
+      return response.status(400).json({
+        error: 'Name or number is missing',
+      });
+    }
   
-  const PORT = 3001
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
+    // Check if the name already exists in the phonebook
+    const nameExists = people.some((person) => person.name === body.name);
+    if (nameExists) {
+      return response.status(400).json({
+        error: 'Name must be unique',
+      });
+    }
+  
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: generateId(),
+    };
+  
+    people = people.concat(person);
+  
+    response.json(person);
+  });
+
+// Route to display phonebook info
+app.get('/info', (request, response) => {
+  const currentTime = new Date().toString(); // Get the current date and time as a string
+  const numberOfEntries = people.length; // Calculate the number of entries in the phonebook
+
+  response.send(`
+    <p>Phonebook has entries for ${numberOfEntries} people</p>
+    ${currentTime}
+  `);
+});
+
+// Start the server
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
