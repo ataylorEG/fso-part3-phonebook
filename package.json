@@ -1,0 +1,25 @@
+{
+  "name": "fso-part3-phonebook",
+  "version": "1.0.0",
+  "description": "phonebook backend application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ataylorEG/fso-part3-phonebook.git"
+  },
+  "author": "Alex Taylor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ataylorEG/fso-part3-phonebook/issues"
+  },
+  "homepage": "https://github.com/ataylorEG/fso-part3-phonebook#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  }
+}
