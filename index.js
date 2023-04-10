@@ -1,7 +1,19 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 
 app.use(express.json());
+
+// Create a new token for request body
+morgan.token('body', (req) => {
+    return JSON.stringify(req.body);
+  });
+  
+  // Define a custom format string for Morgan
+  const customFormat = ':method :url :status :res[content-length] - :response-time ms :body';
+  
+  // Add Morgan as a middleware with the custom format
+  app.use(morgan(customFormat));
 
 // Sample data for phonebook entries
 let people = [
@@ -108,6 +120,12 @@ app.get('/info', (request, response) => {
     ${currentTime}
   `);
 });
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+
+app.use(unknownEndpoint)
 
 // Start the server
 const PORT = 3001;
