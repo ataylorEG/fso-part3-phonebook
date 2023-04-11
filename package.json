@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ataylorEG/fso-part3-phonebook#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22"

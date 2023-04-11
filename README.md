@@ -1,2 +1,5 @@
 # fso-part3-phonebook
-A separate repository for part 3 of the fullstackopen online course.
+Dedicated backend for the phonebook application. 
+
+# Link to Online App
+http://alexfso-phonebook-backend.fly.dev/
